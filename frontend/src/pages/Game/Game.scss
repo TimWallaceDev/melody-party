@@ -1,0 +1,55 @@
+@use "../../styles/mixins.scss" as *;
+
+.game {
+
+    &__information {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__image {
+        width: 100%;
+
+        @include tablet {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+    }
+
+    &__details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__answers {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        width: 100%;
+
+    }
+
+    &__answer {
+        @include button;
+        @include button--secondary;
+    }
+
+    &__skip {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__skip-button {
+        @include button;
+        @include button--primary
+    }
+}
