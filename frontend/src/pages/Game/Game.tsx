@@ -34,6 +34,7 @@ export function Game(props: GameProps) {
 
         //next Question
         socket.on("next question", (answers: string[], nextTrack: any) => {
+            console.log(nextTrack)
             setAnswers(answers)
             setGameIsStarted(true)
             // setPreviewUrl(nextTrack.track.preview_url)
