@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./Game.scss"
+import { Socket } from "socket.io-client";
 
-export function Game({ socket }) {
+
+interface GameProps {
+    socket: Socket
+}
+
+export function Game(props: GameProps) {
+
+    const {socket} = props
 
     const { roomCode } = useParams()
     const [gameIsStarted, setGameIsStarted] = useState(false)
     const [roundOver, setRoundOver] = useState(false)
     const [gameOver, setGameOver] = useState(false)
-    const [answers, setAnswers] = useState([])
-    const [playlistData, setPlaylistData] = useState({})
+    const [answers, setAnswers] = useState<Array<string>>([])
+    const [playlistData, setPlaylistData] = useState<any>({})
     const [track, setTrack] = useState({})
     const [previewUrl, setPreviewUrl] = useState("")
-    const [selectedButton, setSelectedButton] = useState("")
+    const [selectedButton, setSelectedButton] = useState<any>("")
     const [answer, setAnswer] = useState("")
     const [score, setScore] = useState("")
     const [numberOfPlayersAnswered, setNumberOfPlayersAnswered] = useState(0)
@@ -21,12 +29,12 @@ export function Game({ socket }) {
     const [skips, setSkips] = useState(0)
 
     useEffect(() => {
-        socket.on('error', (message) => {
+        socket.on('error', (message: string) => {
             alert(message); // Handle error message (e.g., display to user)
         });
 
         //next Question
-        socket.on("next question", (answers, nextTrack) => {
+        socket.on("next question", (answers: string[], nextTrack: any) => {
             setAnswers(answers)
             setGameIsStarted(true)
             setPreviewUrl(nextTrack.track.preview_url)
@@ -42,20 +50,20 @@ export function Game({ socket }) {
         })
 
         //receive new player
-        socket.on('player added', (users, updatedPlaylistData) => {
+        socket.on('player added', (users: any, updatedPlaylistData: any) => {
             setPlaylistData(updatedPlaylistData)
         });
 
-        socket.on("players answered", (newNumberOfPlayersAnswered, newNumberOfPlayers) => {
+        socket.on("players answered", (newNumberOfPlayersAnswered: number, newNumberOfPlayers: number) => {
             setNumberOfPlayersAnswered(newNumberOfPlayersAnswered)
             setNumberOfPlayers(newNumberOfPlayers)
         })
 
-        socket.on("number of skips", (newNumberOfSkips) => {
+        socket.on("number of skips", (newNumberOfSkips: number) => {
             setSkips(newNumberOfSkips)
         })
 
-        socket.on("results", (correctAnswer, users) => {
+        socket.on("results", (correctAnswer: string, users: any) => {
             //visually display wether answer is correct
             let currentAnswer = answer
             if (currentAnswer === correctAnswer) {
@@ -67,16 +75,16 @@ export function Game({ socket }) {
                     //set the correct answer green
                 }
             }
-
+            const index: string | undefined = socket.id
             //set user score
-            console.log(users[socket.id])
-            setScore(users[socket.id].score)
+            console.log(users[index || 0])
+            setScore(users[index || 0].score)
             //set round over
             setRoundOver(true)
 
         });
 
-        socket.on("game over", (users) => {
+        socket.on("game over", (users: any) => {
             console.log("game over")
             setGameOver(true)
         })
@@ -93,7 +101,7 @@ export function Game({ socket }) {
     }, [answer]);
 
 
-    function handleSubmitAnswer(e) {
+    function handleSubmitAnswer(e: any) {
         let selected = e.target.innerText
         setAnswer(selected)
         setSelectedButton(e.target)
@@ -103,7 +111,7 @@ export function Game({ socket }) {
         setDisabled(true)
     }
 
-    function handleSkip(e) {
+    function handleSkip(e: any) {
         //send skip vote to server
         socket.emit("skip", roomCode)
 

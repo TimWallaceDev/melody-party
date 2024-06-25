@@ -30,7 +30,7 @@ export function GameOverAdmin({ scores }: any) {
 
             <h2>Rankings</h2>
             <ol>
-                {finalScores.map(score => <li>{score.name}</li>)}
+                {finalScores.map((score: any) => <li>{score.name}</li>)}
             </ol>
         </section>
     )
