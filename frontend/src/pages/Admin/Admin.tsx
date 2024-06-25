@@ -61,12 +61,14 @@ export function Admin({ socket }: AdminProps) {
         })
 
         socket.on('results', (newCorrectAnswer, users) => {
+            console.log("results socket")
             setRoundOver(true)
             setScores(users)
             setCorrectAnswer(newCorrectAnswer)
         });
 
         socket.on("game over", (users) => {
+            console.log("game over socket")
             console.log("game over")
             setScores(users)
             setRoundOver(true)
@@ -84,6 +86,7 @@ export function Admin({ socket }: AdminProps) {
     }, []);
 
     useEffect(() => {
+        console.log("admin useeffect / previewurl dependency")
         if (audioRef.current) {
             audioRef.current.play()
         }

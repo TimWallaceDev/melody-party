@@ -3,12 +3,12 @@ import { useEffect, useState } from "react"
 import { Socket } from "socket.io-client"
 
 interface RoundOverAdminProps {
-socket: Socket,
-roomCode: string;
-scores: any
+    socket: Socket,
+    roomCode: string;
+    scores: any
 }
 
-export function RoundOverAdmin({socket, roomCode, scores}: RoundOverAdminProps) {
+export function RoundOverAdmin({ socket, roomCode, scores }: RoundOverAdminProps) {
 
     const [winners, setWinners] = useState<string[]>([])
 
@@ -20,7 +20,7 @@ export function RoundOverAdmin({socket, roomCode, scores}: RoundOverAdminProps) 
         socket.emit("next question", roomCode)
     }
 
-    function topThree(){
+    function topThree() {
         //get keys
         const keys = Object.keys(scores)
         //sort scores
@@ -28,8 +28,8 @@ export function RoundOverAdmin({socket, roomCode, scores}: RoundOverAdminProps) 
 
         const winnersTmp: string[] = []
 
-        for (let i = 0; i < 3; i++){
-            if (keys[i]){
+        for (let i = 0; i < 3; i++) {
+            if (keys[i]) {
                 const winner = scores[keys[i]]
                 winnersTmp.push(`${winner.score}  -  ${winner.name}`)
             }
@@ -38,11 +38,11 @@ export function RoundOverAdmin({socket, roomCode, scores}: RoundOverAdminProps) 
     }
 
     return (
-        <section className="">
-            <button onClick={handleNextQuestion}>Next Question!</button>
+        <section className="round-over">
+            <button className="round-over__button" onClick={handleNextQuestion}>Next Question!</button>
 
-            <ol>
-                <h2>winners</h2>
+            <h2>Leading after this round</h2>
+            <ol className="round-over__leaders">
                 {winners.map(winner => <li>{winner}</li>)}
             </ol>
         </section>

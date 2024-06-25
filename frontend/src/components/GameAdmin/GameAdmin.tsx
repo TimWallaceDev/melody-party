@@ -22,21 +22,22 @@ export function GameAdmin(props: GameAdminProps) {
     useEffect(() => {
         //find the correct answer and make it green
         const buttons = document.getElementsByClassName("game-information__answer") as HTMLCollectionOf<HTMLButtonElement>
-        console.log({ correctAnswer })
         console.log("refreshing buttons")
+        console.log(roundOver, correctAnswer)
 
         for (let button of buttons) {
             if (button.innerText === correctAnswer) {
                 button.style.backgroundColor = "green"
             }
             else {
-                button.style.backgroundColor = "aqua"
+                button.style.backgroundColor = "white"
             }
         }
 
     }, [roundOver, correctAnswer])
 
     function handleEndRound() {
+        console.log("handle end round socket")
         socket.emit("end round", roomCode)
         setRoundOver(true)
     }
@@ -68,7 +69,7 @@ export function GameAdmin(props: GameAdminProps) {
                 }
 
                 {!roundOver &&
-                    <button onClick={handleEndRound}>End Round</button>
+                    <button className="game-information__button" onClick={handleEndRound}>End Round</button>
                 }
 
             </div>

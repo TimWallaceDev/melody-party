@@ -71,6 +71,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on("end round", (roomCode) => {
+        console.log("end round")
         //check wether answer is correct
         const correctAnswer = rooms[roomCode].correctAnswer
         io.to(roomCode).emit("results", correctAnswer, rooms[roomCode].users)

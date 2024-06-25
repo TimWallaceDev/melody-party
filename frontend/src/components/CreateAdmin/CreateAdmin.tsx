@@ -34,12 +34,18 @@ export function CreateAdmin(props: CreateAdminProps) {
         setPlaylistUrl(e.target.value)
     }
 
-    function handleAmount(selectedAmount: number) {
+    function handleAmount(e: any, selectedAmount: number) {
         setAmount(selectedAmount)
 
-        //make button visually different
-
         //remove checked state from all other buttons
+        const buttons = document.getElementsByClassName("admin-create__round")
+
+        for (let button of buttons){
+            button.style.backgroundColor = "white"
+        }
+        //make button visually different
+        e.target.style.backgroundColor = "green"
+
     }
 
     return (
@@ -61,10 +67,10 @@ export function CreateAdmin(props: CreateAdminProps) {
                     <div className="admin-create__rounds">
                         <p>Number of Rounds</p>
                         <div className="admin-create__buttons">
-                            <button className="admin-create__round" type="button" onClick={() => handleAmount(10)}>10</button>
-                            <button className="admin-create__round" type="button" onClick={() => handleAmount(25)}>25</button>
-                            <button className="admin-create__round" type="button" onClick={() => handleAmount(50)}>50</button>
-                            <button className="admin-create__round" type="button" onClick={() => handleAmount(100)}>Max</button>
+                            <button className="admin-create__round" type="button" onClick={(e) => handleAmount(e, 10)}>10</button>
+                            <button className="admin-create__round" type="button" onClick={(e) => handleAmount(e, 25)}>25</button>
+                            <button className="admin-create__round" type="button" onClick={(e) => handleAmount(e, 50)}>50</button>
+                            <button className="admin-create__round" type="button" onClick={(e) => handleAmount(e, 100)}>Max</button>
                         </div>
                     </div>
                     <button className="admin-create__submit">Create Room</button>

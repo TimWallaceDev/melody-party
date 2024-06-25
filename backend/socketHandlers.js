@@ -21,6 +21,7 @@ export function joinRoom(roomCode, username, playlistUrl) {
 }
 
 export function nextQuestion(roomCode) {
+    console.log("next question")
     //check if the game is over
     const currentIndex = rooms[roomCode].currentQuestion
     const rounds = rooms[roomCode].rounds

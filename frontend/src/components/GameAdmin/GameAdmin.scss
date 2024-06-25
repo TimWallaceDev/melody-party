@@ -1,17 +1,18 @@
+@use "../../styles/mixins.scss" as *;
+
 
 .admin-game {
     color: white;
 }
 
-.room-information {
-    display: flex;
-    justify-content: space-between;
-}
-
 
 .game-information {
 
-    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+
     &__answers {
         display: flex;
         gap: 16px;
@@ -20,7 +21,13 @@
     &__answer {
         list-style-type: none;
         border: 1px solid black;
-        background-color: aqua;
+        background-color: white;
         padding: 16px;
+        color: black;
+    }
+
+    &__button {
+        @include button;
+        margin-top: 64px;
     }
 }

@@ -125,6 +125,7 @@ export function Game({ socket }) {
             {!gameIsStarted &&
                 <section className="game-waitingroom">
                     <h1>Welcome to the game</h1>
+                    <p>Waiting for Admin to start the game...</p>
                 </section>
             }
 
@@ -145,10 +146,10 @@ export function Game({ socket }) {
 
                     {answers.length > 0 &&
                         <ul className="game__answers">
-                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[0].track.name}</button>
-                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[1].track.name}</button>
-                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[2].track.name}</button>
-                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[3].track.name}</button>
+                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[0]}</button>
+                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[1]}</button>
+                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[2]}</button>
+                            <button className="game__answer" disabled={disabled} onClick={(e) => handleSubmitAnswer(e)}>{answers[3]}</button>
                         </ul>
                     }
                 </section>

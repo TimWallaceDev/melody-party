@@ -26,8 +26,8 @@ export function WaitingRoomAdmin({ socket, userList, roomCode, setGameIsStarted,
 
         <section className="admin-waiting-room">
             <div className="room-information">
-                <img className="room-information__playlist-image" src={playlistData.playlistImg} />
                 <h1 className="room-information__playlist-name">{playlistData.playlistName}</h1>
+                <img className="room-information__playlist-image" src={playlistData.playlistImg} />
                 <h2 className="room-information__room-code">Room Code: {roomCode}</h2>
             </div>
             <div className="players">
@@ -36,8 +36,11 @@ export function WaitingRoomAdmin({ socket, userList, roomCode, setGameIsStarted,
                 <ul>
                     {userList && userList.map(user => <li key={user}>{user}</li>)}
                 </ul>
+
+                {!userList && 
+                <p>No players yet...</p>}
             </div>
-            <button onClick={handleStartGame}>Start Game!</button>
+            <button onClick={handleStartGame} className="admin-waiting-room__start-button">Start Game!</button>
         </section>
     )
 }

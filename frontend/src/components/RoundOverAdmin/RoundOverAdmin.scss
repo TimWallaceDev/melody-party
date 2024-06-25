@@ -1,0 +1,13 @@
+@use "../../styles/mixins.scss" as *;
+
+.round-over {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+
+    &__button {
+        @include button;
+        margin-top: 64px;
+    }
+}
