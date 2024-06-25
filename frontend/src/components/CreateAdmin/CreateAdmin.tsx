@@ -38,9 +38,10 @@ export function CreateAdmin(props: CreateAdminProps) {
         setAmount(selectedAmount)
 
         //remove checked state from all other buttons
-        const buttons = document.getElementsByClassName("admin-create__round")
+        const buttons: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName("admin-create__round") as HTMLCollectionOf<HTMLElement>
 
-        for (let button of buttons){
+        for (let i = 0; i < buttons.length; i++){
+            const button: HTMLElement = buttons[i]
             button.style.backgroundColor = "white"
         }
         //make button visually different

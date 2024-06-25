@@ -18,8 +18,7 @@ export function Game(props: GameProps) {
     const [gameOver, setGameOver] = useState(false)
     const [answers, setAnswers] = useState<Array<string>>([])
     const [playlistData, setPlaylistData] = useState<any>({})
-    const [track, setTrack] = useState({})
-    const [previewUrl, setPreviewUrl] = useState("")
+    // const [previewUrl, setPreviewUrl] = useState("")
     const [selectedButton, setSelectedButton] = useState<any>("")
     const [answer, setAnswer] = useState("")
     const [score, setScore] = useState("")
@@ -37,8 +36,7 @@ export function Game(props: GameProps) {
         socket.on("next question", (answers: string[], nextTrack: any) => {
             setAnswers(answers)
             setGameIsStarted(true)
-            setPreviewUrl(nextTrack.track.preview_url)
-            setTrack(nextTrack.track.name)
+            // setPreviewUrl(nextTrack.track.preview_url)
             setNumberOfPlayersAnswered(0)
             setRoundOver(false)
             setSkips(0)
@@ -51,6 +49,7 @@ export function Game(props: GameProps) {
 
         //receive new player
         socket.on('player added', (users: any, updatedPlaylistData: any) => {
+            console.log(users)
             setPlaylistData(updatedPlaylistData)
         });
 
@@ -86,6 +85,7 @@ export function Game(props: GameProps) {
 
         socket.on("game over", (users: any) => {
             console.log("game over")
+            console.log(users)
             setGameOver(true)
         })
 
