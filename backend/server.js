@@ -12,19 +12,23 @@ const server = createServer(app);
 export const io = new Server(server, {
     cors: {
         origin: "*",  // Allow all origins
-        methods: ["GET", "POST"]
-    }
+        methods: ["GET", "POST"],
+        
+    },
+    path: "/socket"
 });
 
 const PORT = 3030
 
-app.get('/', (req, res) => {
-    res.send("backend server is running");
-});
+// app.get('/', (req, res) => {
+//     res.send("backend server is running");
+// });
 
-app.use("/api/create", createRouter)
+// app.use("/api/create", createRouter)
 
 export const rooms = {}
+
+// app.get("/socket")
 
 io.on('connection', (socket) => {
     console.log('a user connected');
