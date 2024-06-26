@@ -1,31 +1,33 @@
-import { rooms, io } from './server.js';
-import { getRandomTracks } from './functions.js';
+import { rooms as roomData, io } from './server';
+import { getRandomTracks } from './functions';
+
+interface Rooms {
+    [key: string]: any;
+}
+
+const rooms: Rooms = roomData
 
 export function handleDisconnect() {
     console.log('user disconnected');
 }
 
-export function handleStartGame(roomCode) {
+export function handleStartGame(roomCode: string) {
     io.to(roomCode).emit("start game", roomCode)
 }
 
-export function getUsers(rooms, roomCode) {
+export function getUsers(rooms: any, roomCode: string) {
     //get list of names
     console.log(rooms[roomCode])
     let names = Object.keys(rooms[roomCode].users).map(key => rooms[roomCode].users[key].name)
     io.emit("player added", names)
 }
 
-export function joinRoom(roomCode, username, playlistUrl) {
-
-}
-
-export function nextQuestion(roomCode) {
+export function nextQuestion(roomCode: string) {
     console.log("next question")
     //check if the game is over
     const currentIndex = rooms[roomCode].currentQuestion
     const rounds = rooms[roomCode].rounds
-    if (currentIndex === rounds){
+    if (currentIndex === rounds) {
         io.to(roomCode).emit("game over", rooms[roomCode].users)
         console.log("game over")
 
@@ -39,6 +41,7 @@ export function nextQuestion(roomCode) {
 
     //get the next correct answer (with audio preview)
     const nextTrack = rooms[roomCode].tracks[nextIndex]
+    const previewUrl = nextTrack.track.preview_url
 
     //get 3 random answers to compliment the answer
     const tracks = rooms[roomCode].tracks
@@ -55,5 +58,5 @@ export function nextQuestion(roomCode) {
 
     //send next question to room
     //send the answers and previewURL
-    io.to(roomCode).emit("next question", [tracks[random[0]].track.name, tracks[random[1]].track.name, tracks[random[2]].track.name, tracks[random[3]].track.name], nextTrack)
+    io.to(roomCode).emit("next question", [tracks[random[0]].track.name, tracks[random[1]].track.name, tracks[random[2]].track.name, tracks[random[3]].track.name], previewUrl)
 }

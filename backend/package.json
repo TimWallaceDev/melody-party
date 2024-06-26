@@ -1,21 +1,28 @@
 {
-  "name": "backend",
+  "name": "typescript-express",
   "version": "1.0.0",
-  "description": "A music game",
-  "main": "server.js",
+  "description": "Basic Express.js app with TypeScript",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch server.js"
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "build": "tsc"
   },
-  "author": "Tim Wallace",
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.7.2",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "shuffle-array": "^1.0.1",
-    "socket.io": "^4.7.5"
+    "express": "^4.17.2",
+    "shuffle-array": "^1.0.1"
   },
-  "type": "module"
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.11",
+    "@types/shuffle-array": "^1.0.5",
+    "@types/socket.io": "^3.0.2",
+    "eslint": "^9.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.5.2"
+  }
 }

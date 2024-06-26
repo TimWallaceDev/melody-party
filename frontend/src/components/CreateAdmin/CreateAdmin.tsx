@@ -34,7 +34,7 @@ export function CreateAdmin(props: CreateAdminProps) {
         setPlaylistUrl(e.target.value)
     }
 
-    function handleAmount(e: any, selectedAmount: number) {
+    function handleAmount(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, selectedAmount: number) {
         setAmount(selectedAmount)
 
         //remove checked state from all other buttons
@@ -45,7 +45,7 @@ export function CreateAdmin(props: CreateAdminProps) {
             button.style.backgroundColor = "white"
         }
         //make button visually different
-        e.target.style.backgroundColor = "green"
+        e.currentTarget.style.backgroundColor = "green"
 
     }
 

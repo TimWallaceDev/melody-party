@@ -17,9 +17,9 @@ export function Game(props: GameProps) {
     const [roundOver, setRoundOver] = useState(false)
     const [gameOver, setGameOver] = useState(false)
     const [answers, setAnswers] = useState<Array<string>>([])
-    const [playlistData, setPlaylistData] = useState<any>({})
-    // const [previewUrl, setPreviewUrl] = useState("")
-    const [selectedButton, setSelectedButton] = useState<any>("")
+    const [playlistData, setPlaylistData] = useState<{playlistImg: string, playlistName: string} | null>(null)
+    const [previewUrl, setPreviewUrl] = useState("")
+    const [selectedButton, setSelectedButton] = useState<HTMLButtonElement | null>(null)
     const [answer, setAnswer] = useState("")
     const [score, setScore] = useState("")
     const [numberOfPlayersAnswered, setNumberOfPlayersAnswered] = useState(0)
@@ -33,23 +33,24 @@ export function Game(props: GameProps) {
         });
 
         //next Question
-        socket.on("next question", (answers: string[], nextTrack: any) => {
-            console.log(nextTrack)
+        socket.on("next question", (answers: string[], newPreviewUrl: string) => {
             setAnswers(answers)
             setGameIsStarted(true)
-            // setPreviewUrl(nextTrack.track.preview_url)
+            setPreviewUrl(newPreviewUrl)
             setNumberOfPlayersAnswered(0)
             setRoundOver(false)
             setSkips(0)
             setAnswer("")
 
             //remove button styling
-            selectedButton.style.backgroundColor = "#ddd"
+            if (selectedButton){
+                selectedButton.style.backgroundColor = "#ddd"
+            }
             setDisabled(false)
         })
 
         //receive new player
-        socket.on('player added', (users: any, updatedPlaylistData: any) => {
+        socket.on('player added', (users: string[], updatedPlaylistData: {playlistName: string, playlistImg: string}) => {
             console.log(users)
             setPlaylistData(updatedPlaylistData)
         });
@@ -66,19 +67,19 @@ export function Game(props: GameProps) {
         socket.on("results", (correctAnswer: string, users: any) => {
             //visually display wether answer is correct
             let currentAnswer = answer
-            if (currentAnswer === correctAnswer) {
+            if (currentAnswer === correctAnswer && selectedButton) {
                 selectedButton.style.backgroundColor = "green"
             }
             else {
-                if (answer) {
+                if (answer && selectedButton) {
                     selectedButton.style.backgroundColor = "red"
                     //set the correct answer green
                 }
             }
-            const index: string | undefined = socket.id
+            const index: string = socket.id as string
             //set user score
-            console.log(users[index || 0])
-            setScore(users[index || 0].score)
+            console.log(users[index])
+            setScore(users[index].score)
             //set round over
             setRoundOver(true)
 
@@ -102,21 +103,21 @@ export function Game(props: GameProps) {
     }, [answer]);
 
 
-    function handleSubmitAnswer(e: any) {
-        let selected = e.target.innerText
+    function handleSubmitAnswer(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        let selected = e.currentTarget.innerText
         setAnswer(selected)
-        setSelectedButton(e.target)
+        setSelectedButton(e.currentTarget)
 
         //send answer to server
         socket.emit("answer", roomCode, selected, Date.now())
         setDisabled(true)
     }
 
-    function handleSkip(e: any) {
+    function handleSkip(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         //send skip vote to server
         socket.emit("skip", roomCode)
 
-        e.target.disabled = true;
+        e.currentTarget.disabled = true;
     }
 
     return (

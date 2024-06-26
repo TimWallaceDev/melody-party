@@ -1,6 +1,5 @@
 import axios from 'axios';
 import 'dotenv/config';
-import { rooms } from './server.js';
 import shuffle from "shuffle-array"
 
 
@@ -30,7 +29,7 @@ export async function getToken() {
     }
 }
 
-export async function getPlaylistTracks(playlistId) {
+export async function getPlaylistTracks(playlistId: string) {
     const token = await getToken()
     try {
         //create header with token
@@ -42,11 +41,8 @@ export async function getPlaylistTracks(playlistId) {
         let response = await axios.get("https://api.spotify.com/v1/playlists/" + playlistId, config)
         const playlistImg = response.data.images[0].url
         const playlistName = response.data.name
-        // const playlistTracks = response.data.tracks.items
         //filter only items with a preview URL
-        const playlistTracks = shuffle(response.data.tracks.items.filter(track => track.track.preview_url ?  true : false))
-
-
+        const playlistTracks = shuffle(response.data.tracks.items.filter((track: any) => track.track.preview_url ?  true : false))
         const playlistData = {playlistImg, playlistName, playlistTracks}
 
         return playlistData
@@ -58,12 +54,7 @@ export async function getPlaylistTracks(playlistId) {
     }
 }
 
-
-export async function getNextTrack(room){
-
-}
-
-export function getRandomTracks(tracks, correctIndex){
+export function getRandomTracks(tracks: any, correctIndex: number){
     const length = tracks.length
     const randomIndices = [correctIndex]
     let randomIndex = Math.floor(Math.random() * length)

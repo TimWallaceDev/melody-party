@@ -41,9 +41,9 @@ export function Admin({ socket }: AdminProps) {
         })
 
         //next Question
-        socket.on("next question", (answers, nextTrack) => {
+        socket.on("next question", (answers, previewUrl) => {
             setAnswers(answers)
-            setPreviewUrl(nextTrack.track.preview_url)
+            setPreviewUrl(previewUrl)
             setRoundOver(false)
             setNumberOfPlayersAnswered(0)
             setRoundOver(false)

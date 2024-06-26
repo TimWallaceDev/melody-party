@@ -1,10 +1,9 @@
 import express from 'express';
 import { createServer } from 'node:http';
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import cors from "cors"
-import { createRouter } from "./routes/create-router.js"
-import { handleDisconnect, nextQuestion } from './socketHandlers.js';
-import { getPlaylistTracks, getToken, getRandomTracks } from './functions.js';
+import { handleDisconnect, nextQuestion } from './socketHandlers';
+import { getPlaylistTracks, getToken } from './functions';
 
 const app = express()
 app.use(cors())
@@ -13,7 +12,6 @@ export const io = new Server(server, {
     cors: {
         origin: "*",  // Allow all origins
         methods: ["GET", "POST"],
-        
     },
     path: "/socket"
 });
@@ -26,31 +24,31 @@ const PORT = 3030
 
 // app.use("/api/create", createRouter)
 
-export const rooms = {}
+export const rooms: any = {}
 
 // app.get("/socket")
 
-io.on('connection', (socket) => {
+io.on('connection', (socket: Socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => handleDisconnect());
 
-    socket.on("next question", (roomCode) => nextQuestion(roomCode))
+    socket.on("next question", (roomCode: string) => nextQuestion(roomCode))
 
-    socket.on("get users", (roomCode) => {
+    socket.on("get users", (roomCode: string) => {
         //get list of names
-        let names = Object.keys(rooms[roomCode].users).map(key => rooms[roomCode].users[key].name)
+        let names: string[] = Object.keys(rooms[roomCode].users).map(key => rooms[roomCode].users[key].name)
         io.emit("player added", names)
     })
 
-    socket.on('create room', async (roomCode, username, playlistUrl, rounds) => {
-        console.log("creating room")
-        const split = playlistUrl.split("/")
-        const playlistId = split[split.length - 1]
+    socket.on('create room', async (roomCode: string, username: string, playlistUrl: string, rounds: number) => {
+        console.log("creating room", username)
+        const split: string[] = playlistUrl.split("/")
+        const playlistId: string = split[split.length - 1]
         const playlistData = await getPlaylistTracks(playlistId)
 
         //create room
         //check that room exists
-        if (!rooms[roomCode]) rooms[roomCode] = {
+        if (!rooms[roomCode] && playlistData !== "playlist error") rooms[roomCode] = {
             users: {},
             token: getToken(),
             tracks: playlistData.playlistTracks,
@@ -74,14 +72,14 @@ io.on('connection', (socket) => {
 
     });
 
-    socket.on("end round", (roomCode) => {
+    socket.on("end round", (roomCode: string) => {
         console.log("end round")
         //check wether answer is correct
         const correctAnswer = rooms[roomCode].correctAnswer
         io.to(roomCode).emit("results", correctAnswer, rooms[roomCode].users)
     })
 
-    socket.on('join room', async (roomCode, username) => {
+    socket.on('join room', async (roomCode: string, username: string) => {
         //check that room exists
 
         //check that username is not taken
@@ -108,7 +106,8 @@ io.on('connection', (socket) => {
         io.to(roomCode).emit("player added", names, playlistData)
     });
 
-    socket.on('answer', (roomCode, answer, timestamp) => {
+    socket.on('answer', (roomCode: string, answer: string, timestamp: EpochTimeStamp) => {
+        console.log(timestamp)
 
         //check wether answer is correct
         const correctAnswer = rooms[roomCode].correctAnswer
@@ -135,7 +134,7 @@ io.on('connection', (socket) => {
 
     })
 
-    socket.on('skip', (roomCode) => {
+    socket.on('skip', (roomCode: string) => {
         //increment the number of skips
         rooms[roomCode].skips++
         //if everyone has skipped, go to the next song
