@@ -1,11 +1,10 @@
-import { rooms as roomData, io } from './server';
+import { io } from './server';
 import { getRandomTracks } from './functions';
+import { getRooms } from './server';
 
 interface Rooms {
     [key: string]: any;
 }
-
-const rooms: Rooms = roomData
 
 export function handleDisconnect() {
     console.log('user disconnected');
@@ -15,23 +14,15 @@ export function handleStartGame(roomCode: string) {
     io.to(roomCode).emit("start game", roomCode)
 }
 
-export function getUsers(rooms: any, roomCode: string) {
-    //get list of names
-    console.log(rooms[roomCode])
-    let names = Object.keys(rooms[roomCode].users).map(key => rooms[roomCode].users[key].name)
-    io.emit("player added", names)
-}
-
 export function nextQuestion(roomCode: string) {
-    console.log("next question")
     //check if the game is over
+    const rooms: Rooms = getRooms()
     const currentIndex = rooms[roomCode].currentQuestion
     const rounds = rooms[roomCode].rounds
     if (currentIndex === rounds) {
         io.to(roomCode).emit("game over", rooms[roomCode].users)
-        console.log("game over")
 
-        //TODO delete obj 
+        //TODO delete room obj
         return
     }
 
@@ -41,11 +32,11 @@ export function nextQuestion(roomCode: string) {
 
     //get the next correct answer (with audio preview)
     const nextTrack = rooms[roomCode].tracks[nextIndex]
-    const previewUrl = nextTrack.track.preview_url
+    const previewUrl: string = nextTrack.track.preview_url
 
     //get 3 random answers to compliment the answer
     const tracks = rooms[roomCode].tracks
-    const random = getRandomTracks(tracks, nextIndex)
+    const random: number[] = getRandomTracks(tracks, nextIndex)
 
     //save the correct answer
     rooms[roomCode].correctAnswer = nextTrack.track.name
@@ -55,6 +46,7 @@ export function nextQuestion(roomCode: string) {
     rooms[roomCode].skips = 0
 
     //start a timer
+    rooms[roomCode].questionTimestamp = new Date;
 
     //send next question to room
     //send the answers and previewURL

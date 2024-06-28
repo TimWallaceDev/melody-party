@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { Server, Socket } from "socket.io";
 import cors from "cors"
 import { handleDisconnect, nextQuestion } from './socketHandlers';
-import { getPlaylistTracks, getToken } from './functions';
+import { getPlaylistTracks } from './functions';
 
 const app = express()
 app.use(cors())
@@ -26,7 +26,9 @@ const PORT = 3030
 
 export const rooms: any = {}
 
-// app.get("/socket")
+export function getRooms(): {[key: string]: any}{
+    return rooms
+}
 
 io.on('connection', (socket: Socket) => {
     console.log('a user connected');
@@ -40,35 +42,49 @@ io.on('connection', (socket: Socket) => {
         io.emit("player added", names)
     })
 
-    socket.on('create room', async (roomCode: string, username: string, playlistUrl: string, rounds: number) => {
-        console.log("creating room", username)
+    socket.on('create room', async (playlistUrl: string, rounds: number) => {
         const split: string[] = playlistUrl.split("/")
         const playlistId: string = split[split.length - 1]
         const playlistData = await getPlaylistTracks(playlistId)
 
+        if (playlistData === "playlist error") {
+            socket.emit("error", "Error getting playlist data. Are you sure that link is correct?")
+            console.log("playlist error")
+            return
+        }
+        //generate a roomcode
+        let newRoomCode: string = Math.floor(Math.random() * 999_999).toString()
+
+        while (rooms[newRoomCode]) {
+            newRoomCode = Math.floor(Math.random() * 999_999).toString()
+        }
+
         //create room
-        //check that room exists
-        if (!rooms[roomCode] && playlistData !== "playlist error") rooms[roomCode] = {
+
+        rooms[newRoomCode] = {
             users: {},
-            token: getToken(),
             tracks: playlistData.playlistTracks,
             playlistName: playlistData.playlistName,
             playlistImg: playlistData.playlistImg,
             rounds: rounds,
             currentQuestion: -1,
             correctAnswer: "",
+            questionTimestamp: new Date,
             numberOfPlayers: 0,
             playersAnswered: 0,
             skips: 0
         }
 
-        //create playlistData obj
-        const playlistName = rooms[roomCode].playlistName
-        const playlistImg = rooms[roomCode].playlistImg
-        const somePlaylistData = { playlistImg, playlistName }
-        socket.join(roomCode);
 
-        socket.emit("playlist data", somePlaylistData)
+        //create playlistData obj
+        const playlistName = rooms[newRoomCode].playlistName
+        const playlistImg = rooms[newRoomCode].playlistImg
+        const somePlaylistData = { playlistImg, playlistName }
+        socket.join(newRoomCode);
+        console.log("room " + newRoomCode + " created")
+        console.log(rooms)
+
+        socket.emit("playlist data", newRoomCode, somePlaylistData)
 
     });
 
@@ -81,11 +97,17 @@ io.on('connection', (socket: Socket) => {
 
     socket.on('join room', async (roomCode: string, username: string) => {
         //check that room exists
+        if (!rooms[roomCode]) {
+            socket.emit("error", "Room code is invalid. No room found")
+            return
+        }
 
         //check that username is not taken
         if (rooms[roomCode].users[username]) {
             socket.emit("error", "username is taken")
+            return
         }
+
         else {
             //add user to room
             rooms[roomCode].users[socket.id] = { name: username, score: 0 }
@@ -107,15 +129,19 @@ io.on('connection', (socket: Socket) => {
     });
 
     socket.on('answer', (roomCode: string, answer: string, timestamp: EpochTimeStamp) => {
-        console.log(timestamp)
 
         //check wether answer is correct
         const correctAnswer = rooms[roomCode].correctAnswer
 
         //if it is, add points to the score for that user
+        //calculate the time (ms)
+        const startTime = rooms[roomCode].questionTimestamp
+        const time = timestamp - startTime
+        const minus = time * 0.0333333333
+        const score = 1000 - minus
 
         if (answer === correctAnswer) {
-            rooms[roomCode].users[socket.id].score++
+            rooms[roomCode].users[socket.id].score += score
         }
         rooms[roomCode].playersAnswered += 1
 
@@ -138,7 +164,7 @@ io.on('connection', (socket: Socket) => {
         //increment the number of skips
         rooms[roomCode].skips++
         //if everyone has skipped, go to the next song
-        if (rooms[roomCode].skips == rooms[roomCode].numberOfPlayers){
+        if (rooms[roomCode].skips == rooms[roomCode].numberOfPlayers) {
             nextQuestion(roomCode)
             return
         }

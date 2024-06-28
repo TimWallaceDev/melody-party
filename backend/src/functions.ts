@@ -19,12 +19,14 @@ export async function getToken() {
             client_id: `${process.env.VITE_SPOTIFY_CLIENT_ID}`,
             client_secret: `${process.env.VITE_SPOTIFY_SECRET}`
         }
+        console.log({body})
         //request token from spotify
         let response = await axios.post("https://accounts.spotify.com/api/token", body, headers)
+        console.log("token is successful")
         return response.data.access_token
     
     }catch(err){
-        console.log(err)
+        console.log("token error")
         return "token error"
     }
 }
