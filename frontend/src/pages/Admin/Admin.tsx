@@ -33,10 +33,10 @@ export function Admin({ socket }: AdminProps) {
 
     useEffect(() => {
         //generate room code
-        setRoomCode(Math.floor(Math.random() * 999_999).toString())
 
-        socket.on("playlist data", (somePlaylistData) => {
+        socket.on("playlist data", (newRoomCode, somePlaylistData) => {
             console.log("updated playlist data: " , somePlaylistData)
+            setRoomCode(newRoomCode)
             setPlaylistData(somePlaylistData)
         })
 
@@ -92,16 +92,16 @@ export function Admin({ socket }: AdminProps) {
         }
     }, [previewUrl])
 
-    if (!roomCode) {
-        return <h1>Loading</h1>
-    }
+    // if (!roomCode) {
+    //     return <h1>Loading</h1>
+    // }
 
     return (
         <main className="admin">
 
             <audio src={previewUrl} autoPlay ref={audioRef}></audio>
 
-            {!roomIsCreated &&
+            {!roomIsCreated && roomCode &&
                 <CreateAdmin
                     socket={socket}
                     roomCode={roomCode}
@@ -113,7 +113,7 @@ export function Admin({ socket }: AdminProps) {
                 />
             }
 
-            {roomIsCreated && !gameIsStarted &&
+            {roomIsCreated && !gameIsStarted && roomCode &&
                 <WaitingRoomAdmin
                     socket={socket}
                     userList={userList}
@@ -123,7 +123,7 @@ export function Admin({ socket }: AdminProps) {
                 />
             }
 
-            {roomIsCreated && gameIsStarted && !gameOver &&
+            {roomIsCreated && gameIsStarted && !gameOver && roomCode &&
                 <GameAdmin
                     socket={socket}
                     roomCode={roomCode}
@@ -137,7 +137,7 @@ export function Admin({ socket }: AdminProps) {
                 />
             }
 
-            {roomIsCreated && gameIsStarted && !gameOver && roundOver &&
+            {roomIsCreated && gameIsStarted && !gameOver && roundOver && roomCode &&
 
                 <RoundOverAdmin
                     socket={socket}

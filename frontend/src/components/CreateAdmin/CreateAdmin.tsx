@@ -8,19 +8,20 @@ interface CreateAdminProps  {
     setRoomIsCreated: React.Dispatch<React.SetStateAction<boolean>>,
     playlistUrl: string,
     setPlaylistUrl: React.Dispatch<React.SetStateAction<string>>,
-    amount: Number,
+    amount: number,
     setAmount: React.Dispatch<React.SetStateAction<number>>,
 }
 
 export function CreateAdmin(props: CreateAdminProps) {
-    const { socket, roomCode, setRoomIsCreated, setPlaylistUrl, playlistUrl, amount, setAmount } = props
+    const { socket, setRoomIsCreated, setPlaylistUrl, playlistUrl, amount, setAmount } = props
 
     //create a new game room
     function handleCreateGame(e: React.FormEvent) {
         e.preventDefault()
         try {
             console.log("creating room")
-            socket.emit('create room', roomCode, "admin", playlistUrl, amount);
+            console.log(playlistUrl)
+            socket.emit('create room', playlistUrl, amount);
             setRoomIsCreated(true)
 
             //redirect to /game/admin/roomCode
