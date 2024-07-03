@@ -87,8 +87,12 @@ export function Admin({ socket }: AdminProps) {
 
     useEffect(() => {
         console.log("admin useeffect / previewurl dependency")
-        if (audioRef.current) {
-            audioRef.current.play()
+        try {
+            if (audioRef.current) {
+                audioRef.current.play()
+            }
+        }catch(e){
+            console.warn(e)
         }
     }, [previewUrl])
 
