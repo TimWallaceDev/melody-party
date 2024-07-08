@@ -1,28 +1,14 @@
-import { getPlaylistTracks } from './getPlaylistTracks'; // Adjust import path
+import { getPlaylistTracks } from './getPlaylistTracks';
 
-describe('getRandomTracks', () => {
+describe('getPlaylistTracks', () => {
     //gets a list of tracks from spotify
-    it('returns an array with track objects', () => {
+    it('returns an array with track objects', async () => {
+
+        const testPlaylistId: string = "2zMYFKx7jL6T2Jk0gpHkt5"
         
-        const result = getPlaylistTracks(tracks);
+        const result = await getPlaylistTracks(testPlaylistId);
         expect(Array.isArray(result)).toBe(true);
-        expect(result.length).toBe(tracks.length); // Includes correctIndex
-    });
-
-    it('returns shuffled array excluding correctIndex', () => {
-        const tracks = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
-        const correctIndex = 0;
-        const result = getRandomTracks(tracks, correctIndex);
-        const expectedIndices = [0, 1, 2, 3]; // Assuming tracks length is 4
-        expectedIndices.splice(correctIndex, 1); // Remove correctIndex
-        expect(result).toEqual(expect.arrayContaining(expectedIndices));
-    });
-
-    it('handles edge case with empty tracks', () => {
-        const tracks: any[] | [] = [];
-        const correctIndex = 0;
-        const result = getRandomTracks(tracks, correctIndex);
-        expect(result).toEqual("not enough tracks");
+        expect(Object.keys(result).length > 0).toBe(true); // Includes correctIndex
     });
 
     // Add more tests for randomness, performance, and other edge cases

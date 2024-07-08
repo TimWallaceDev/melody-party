@@ -2,8 +2,7 @@ import { Link } from 'react-router-dom'
 import "./Home.scss"
 
 
-export function Home() {
-
+export const Home: React.FC = () => {
 
     return (
         <main className="home">

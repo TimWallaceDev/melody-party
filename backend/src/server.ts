@@ -10,9 +10,11 @@ import { endRound } from './socket-functions/endRound';
 import { JoinRoom } from './socket-functions/joinRoom';
 import { checkAnswer } from './socket-functions/answer';
 import { skipRound } from './socket-functions/skipRound';
+import 'dotenv/config'
 
 const app = express()
 app.use(cors())
+//what is the type of server? 
 const server = createServer(app);
 export const io = new Server(server, {
     cors: {
@@ -22,7 +24,8 @@ export const io = new Server(server, {
     path: "/socket"
 });
 
-const PORT = 3030
+const ENV_PORT: string | undefined = process.env.PORT
+const PORT: number = ENV_PORT ? parseInt(ENV_PORT) :  3030
 
 export const rooms: Rooms = {}
 

@@ -1,8 +1,8 @@
 import axios from "axios"
+import { AxiosResponse } from "axios"
 import "dotenv/config"
 
 export async function getToken() {
-    console.log("token request")
 
     try {
         const headers = {
@@ -17,14 +17,12 @@ export async function getToken() {
             client_id: `${process.env.VITE_SPOTIFY_CLIENT_ID}`,
             client_secret: `${process.env.VITE_SPOTIFY_SECRET}`
         }
-        console.log({body})
         //request token from spotify
-        const response = await axios.post("https://accounts.spotify.com/api/token", body, headers)
-        console.log("token is successful")
+        const response: AxiosResponse<any, any> = await axios.post("https://accounts.spotify.com/api/token", body, headers)
         return response.data.access_token
     
     }catch(err){
-        console.log("token error")
+        console.error("token error")
         return "token error"
     }
 }

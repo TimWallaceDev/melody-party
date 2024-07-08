@@ -2,9 +2,10 @@
 import { Server } from "socket.io"
 import { getRooms } from "../server"
 import { nextQuestion } from "./nextQuestion"
+import { Rooms } from "../interface definitions/interfaceDefinitions"
 
 export function skipRound(io: Server,roomCode: string){
-    const rooms = getRooms()
+    const rooms: Rooms = getRooms()
 
     //increment the number of skips
     rooms[roomCode].skips++

@@ -3,11 +3,7 @@ import { useEffect, useState } from "react"
 
 export function GameOverAdmin({ scores }: any) {
 
-
-    console.log("game over admin")
-
     useEffect(() => {
-        console.log(scores)
         //get keys
         const keys: string[] = Object.keys(scores)
         //add each score to array

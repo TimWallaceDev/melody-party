@@ -22,8 +22,6 @@ export function GameAdmin(props: GameAdminProps) {
     useEffect(() => {
         //find the correct answer and make it green
         const buttons = document.getElementsByClassName("game-information__answer") as HTMLCollectionOf<HTMLButtonElement>
-        console.log("refreshing buttons")
-        console.log(roundOver, correctAnswer)
 
         for (let button of buttons) {
             if (button.innerText === correctAnswer) {
@@ -37,7 +35,6 @@ export function GameAdmin(props: GameAdminProps) {
     }, [roundOver, correctAnswer])
 
     function handleEndRound() {
-        console.log("handle end round socket")
         socket.emit("end round", roomCode)
         setRoundOver(true)
     }

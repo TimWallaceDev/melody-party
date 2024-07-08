@@ -25,7 +25,7 @@ export function nextQuestion(roomCode: string) {
 
     //get 3 random answers to compliment the answer
     const tracks: Track[] = rooms[roomCode].tracks
-    const random: number[] | "not enough tracks" = getRandomTracks(tracks, nextIndex)
+    const random: number[] | "not enough tracks" = getRandomTracks(tracks.length, nextIndex)
 
     if (random === "not enough tracks"){
         io.to(roomCode).emit("error", "Not enough tracks in the playlist")

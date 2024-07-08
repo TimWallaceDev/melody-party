@@ -3,7 +3,10 @@ export interface Rooms {
 }
 
 export interface Track {
-    track: {preview_url: string; name: string}
+    track: {
+        preview_url: string;
+        name: string
+    }
 }
 
 export interface Room {
@@ -16,16 +19,22 @@ export interface Room {
     currentQuestion: number;
     correctAnswer: string;
     questionTimestamp: number;
-    numberOfPlayers: number,
-    playersAnswered: number,
-    skips: number
+    numberOfPlayers: number;
+    playersAnswered: number;
+    skips: number;
 }
 
 export interface User {
     name: string;
-    score: number
+    score: number;
 }
 
 export interface Users {
     [key: string]: User;
-  }
+}
+
+export interface PlaylistData {
+    playlistName: string;
+    playlistImg: string;
+    playlistTracks: Track[]
+}

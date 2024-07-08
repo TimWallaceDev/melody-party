@@ -4,7 +4,6 @@ import { Socket } from "socket.io-client";
 
 interface CreateAdminProps  {
     socket: Socket;
-    roomCode: string,
     setRoomIsCreated: React.Dispatch<React.SetStateAction<boolean>>,
     playlistUrl: string,
     setPlaylistUrl: React.Dispatch<React.SetStateAction<string>>,
@@ -19,8 +18,6 @@ export function CreateAdmin(props: CreateAdminProps) {
     function handleCreateGame(e: React.FormEvent) {
         e.preventDefault()
         try {
-            console.log("creating room")
-            console.log(playlistUrl)
             socket.emit('create room', playlistUrl, amount);
             setRoomIsCreated(true)
 

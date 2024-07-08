@@ -7,7 +7,7 @@ import { GameOverAdmin } from "../../components/GameOverAdmin/GameOverAdmin.tsx"
 import { RoundOverAdmin } from "../../components/RoundOverAdmin/RoundOverAdmin.tsx";
 import { Socket } from "socket.io-client";
 
-interface AdminProps  {
+interface AdminProps {
     socket: Socket;
 }
 
@@ -19,7 +19,7 @@ export function Admin({ socket }: AdminProps) {
     const [gameIsStarted, setGameIsStarted] = useState<boolean>(false)
     const [answers, setAnswers] = useState<string[]>([])
     const [playlistUrl, setPlaylistUrl] = useState<string>("")
-    const [playlistData, setPlaylistData] = useState<{playlistImg: string; playlistName: string;} | null>(null)
+    const [playlistData, setPlaylistData] = useState<{ playlistImg: string; playlistName: string; } | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string>("")
     const [roundOver, setRoundOver] = useState<boolean>(true)
     const [numberOfPlayersAnswered, setNumberOfPlayersAnswered] = useState<number>(0)
@@ -35,7 +35,6 @@ export function Admin({ socket }: AdminProps) {
         //generate room code
 
         socket.on("playlist data", (newRoomCode, somePlaylistData) => {
-            console.log("updated playlist data: " , somePlaylistData)
             setRoomCode(newRoomCode)
             setPlaylistData(somePlaylistData)
         })
@@ -61,15 +60,12 @@ export function Admin({ socket }: AdminProps) {
         })
 
         socket.on('results', (newCorrectAnswer, users) => {
-            console.log("results socket")
             setRoundOver(true)
             setScores(users)
             setCorrectAnswer(newCorrectAnswer)
         });
 
         socket.on("game over", (users) => {
-            console.log("game over socket")
-            console.log("game over")
             setScores(users)
             setRoundOver(true)
             setGameOver(true)
@@ -86,46 +82,50 @@ export function Admin({ socket }: AdminProps) {
     }, []);
 
     useEffect(() => {
-        console.log("admin useeffect / previewurl dependency")
         try {
             if (audioRef.current) {
                 audioRef.current.play()
             }
-        }catch(e){
+        } catch (e) {
             console.warn(e)
         }
     }, [previewUrl])
 
-    // if (!roomCode) {
-    //     return <h1>Loading</h1>
-    // }
+    if (!roomIsCreated) {
+        return (
+            <CreateAdmin
+                socket={socket}
+                setRoomIsCreated={setRoomIsCreated}
+                setPlaylistUrl={setPlaylistUrl}
+                playlistUrl={playlistUrl}
+                amount={amount}
+                setAmount={setAmount}
+            />
+        )
+    }
+
+    if (roomIsCreated && !gameIsStarted && roomCode) {
+        return (
+            <WaitingRoomAdmin
+                socket={socket}
+                userList={userList}
+                roomCode={roomCode}
+                setGameIsStarted={setGameIsStarted}
+                playlistData={playlistData}
+            />
+        )
+    }
+
+    if (gameOver) {
+        return (
+            <GameOverAdmin scores={scores} />
+        )
+    }
 
     return (
         <main className="admin">
 
             <audio src={previewUrl} autoPlay ref={audioRef}></audio>
-
-            {!roomIsCreated && roomCode &&
-                <CreateAdmin
-                    socket={socket}
-                    roomCode={roomCode}
-                    setRoomIsCreated={setRoomIsCreated}
-                    setPlaylistUrl={setPlaylistUrl}
-                    playlistUrl={playlistUrl}
-                    amount={amount}
-                    setAmount={setAmount}
-                />
-            }
-
-            {roomIsCreated && !gameIsStarted && roomCode &&
-                <WaitingRoomAdmin
-                    socket={socket}
-                    userList={userList}
-                    roomCode={roomCode}
-                    setGameIsStarted={setGameIsStarted}
-                    playlistData={playlistData}
-                />
-            }
 
             {roomIsCreated && gameIsStarted && !gameOver && roomCode &&
                 <GameAdmin
@@ -150,9 +150,6 @@ export function Admin({ socket }: AdminProps) {
                 />
             }
 
-            {gameOver &&
-                <GameOverAdmin scores={scores} />
-            }
         </main>
     )
 }

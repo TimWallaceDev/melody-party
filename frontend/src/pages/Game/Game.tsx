@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import "./Game.scss"
 import { Socket } from "socket.io-client";
 
-
 interface GameProps {
     socket: Socket
 }
@@ -51,7 +50,6 @@ export function Game(props: GameProps) {
 
         //receive new player
         socket.on('player added', (users: string[], updatedPlaylistData: {playlistName: string, playlistImg: string}) => {
-            console.log(users)
             setPlaylistData(updatedPlaylistData)
         });
 
@@ -78,7 +76,6 @@ export function Game(props: GameProps) {
             }
             const index: string = socket.id as string
             //set user score
-            console.log(users[index])
             setScore(users[index].score)
             //set round over
             setRoundOver(true)
@@ -86,7 +83,6 @@ export function Game(props: GameProps) {
         });
 
         socket.on("game over", (users: any) => {
-            console.log("game over")
             console.log(users)
             setGameOver(true)
         })
@@ -173,7 +169,6 @@ export function Game(props: GameProps) {
                     <button className="game__skip-button" onClick={(e) => handleSkip(e)}>Next</button>
                 </section>
             }
-
             
         </main>
     )

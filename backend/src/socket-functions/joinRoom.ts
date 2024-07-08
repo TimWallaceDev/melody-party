@@ -1,8 +1,6 @@
 import { Server, Socket } from "socket.io"
 import { getRooms } from "../server"
 
-
-
 export function JoinRoom(io: Server, socket: Socket, roomCode: string, username: string){
 
     const rooms = getRooms()
@@ -24,16 +22,17 @@ else {
     rooms[roomCode].users[socket.id] = { name: username, score: 0 }
     rooms[roomCode].numberOfPlayers += 1
 }
+
 //broadcast that user is in the room
 socket.join(roomCode);
 
 //create playlistData obj
-const playlistName = rooms[roomCode].playlistName
-const playlistImg = rooms[roomCode].playlistImg
+const playlistName: string = rooms[roomCode].playlistName
+const playlistImg: string = rooms[roomCode].playlistImg
 const playlistData = { playlistImg, playlistName }
 
 //get list of names
-const names = Object.keys(rooms[roomCode].users).map(key => rooms[roomCode].users[key].name)
+const names: string[] = Object.keys(rooms[roomCode].users).map(key => rooms[roomCode].users[key].name)
 
 //send players and playlist information
 io.to(roomCode).emit("player added", names, playlistData)

@@ -1,32 +1,31 @@
 import { Socket } from "socket.io";
 import { getRooms } from "../server";
-import { Track } from "../interface definitions/interfaceDefinitions";
+import { Rooms } from "../interface definitions/interfaceDefinitions";
 import { getPlaylistTracks } from "../functions/getPlaylistTracks";
+import { PlaylistData } from "../interface definitions/interfaceDefinitions";
 
 
 export async function createRoom(socket: Socket, playlistUrl: string, rounds: number) {
-    const rooms = getRooms()
+    const rooms: Rooms = getRooms()
     const split: string[] = playlistUrl.split("/")
     const playlistId: string = split[split.length - 1]
-    const playlistData: { playlistImg: string; playlistName: string; playlistTracks: Track[] } | "playlist error" = await getPlaylistTracks(playlistId)
+    const playlistData: PlaylistData | "playlist error" = await getPlaylistTracks(playlistId)
 
     if (playlistData === "playlist error") {
         socket.emit("error", "Error getting playlist data. Are you sure that link is correct?")
         console.log("playlist error")
         return
     }
-    //TODO
-    //check that playlist is long enough for the amount of rounds
 
     //generate a roomcode
     let newRoomCode: string = Math.floor(Math.random() * 999_999).toString()
 
+    //if roomcode is taken, re-generate another one
     while (rooms[newRoomCode]) {
         newRoomCode = Math.floor(Math.random() * 999_999).toString()
     }
 
     //create room
-
     rooms[newRoomCode] = {
         users: {},
         tracks: playlistData.playlistTracks,
@@ -43,12 +42,13 @@ export async function createRoom(socket: Socket, playlistUrl: string, rounds: nu
 
 
     //create playlistData obj
-    const playlistName = rooms[newRoomCode].playlistName
-    const playlistImg = rooms[newRoomCode].playlistImg
+    const playlistName: string = rooms[newRoomCode].playlistName
+    const playlistImg: string = rooms[newRoomCode].playlistImg
     const somePlaylistData = { playlistImg, playlistName }
-    socket.join(newRoomCode);
-    console.log("room " + newRoomCode + " created")
-    console.log(rooms)
 
+    //add socket to new room
+    socket.join(newRoomCode);
+
+    //send back the room code and data for waiting room
     socket.emit("playlist data", newRoomCode, somePlaylistData)
 }
