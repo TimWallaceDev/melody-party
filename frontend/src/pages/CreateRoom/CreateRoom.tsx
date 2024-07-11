@@ -1,15 +1,28 @@
-import React from "react";
-import "./CreateAdmin.scss"
+import React, { useEffect } from "react";
+import "./CreateRoom.scss"
 import { Socket } from "socket.io-client";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface CreateAdminProps  {
-    socket: Socket;
-    setRoomIsCreated: React.Dispatch<React.SetStateAction<boolean>>,
-}
+export function CreateRoom(socket: Socket) {
 
-export function CreateAdmin(props: CreateAdminProps) {
-    const { socket, setRoomIsCreated } = props
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        socket.on("confirm room", (newRoomCode) => {
+            navigate(`/admin/${newRoomCode}`)
+        })
+
+        socket.on("create room error", (message) => {
+            setErrorMessage(message)
+        }
+    )
+
+        return () => {
+            socket.off("confirm room")
+            socket.off("create room error")
+        }
+    }, [])
 
     const [playlistUrl, setPlaylistUrl] = useState<string>("")
     const [amount, setAmount] = useState<number>(0)
@@ -19,19 +32,13 @@ export function CreateAdmin(props: CreateAdminProps) {
     function handleCreateGame(e: React.FormEvent) {
         e.preventDefault()
         //check that form is not empty
-        if (playlistUrl.length < 1){
+        setErrorMessage("")
+        if (playlistUrl.length < 1) {
             setErrorMessage("Enter a valid playlist URL")
             return
         }
-        try {
-            socket.emit('create room', playlistUrl, amount);
-            setRoomIsCreated(true)
 
-            //redirect to /game/admin/roomCode
-
-        } catch (error) {
-            console.log(error)
-        }
+        socket.emit('create room', playlistUrl, amount);
     }
 
     function handlePlaylistChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -44,7 +51,7 @@ export function CreateAdmin(props: CreateAdminProps) {
         //remove checked state from all other buttons
         const buttons: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName("admin-create__round") as HTMLCollectionOf<HTMLElement>
 
-        for (let i = 0; i < buttons.length; i++){
+        for (let i = 0; i < buttons.length; i++) {
             const button: HTMLElement = buttons[i]
             button.style.backgroundColor = "white"
         }
@@ -60,7 +67,7 @@ export function CreateAdmin(props: CreateAdminProps) {
             <div className="admin-create__controls">
                 <p className="admin-create__playlist-input-label">Enter Spotify playlist URL</p>
                 <form onSubmit={(e) => handleCreateGame(e)}>
-                    <p>{errorMessage}</p>
+                    <p className="admin-create__error-message">{errorMessage}</p>
                     <input
                         type="text"
                         placeholder="playlist URL eg.https://spotify.com/playlist/123456789"

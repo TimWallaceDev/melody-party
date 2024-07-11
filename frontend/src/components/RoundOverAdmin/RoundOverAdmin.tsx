@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client"
 
 interface RoundOverAdminProps {
     socket: Socket,
-    roomCode: string;
+    roomCode: string | undefined;
     scores: any
 }
 

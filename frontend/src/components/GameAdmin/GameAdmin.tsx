@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client"
 
 interface GameAdminProps {
     socket: Socket,
-    roomCode: string,
+    roomCode: string | undefined,
     playlistData: { playlistImg: string; playlistName: string; } | null,
     numberOfPlayers: number,
     numberOfPlayersAnswered: number,

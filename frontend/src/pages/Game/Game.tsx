@@ -21,6 +21,7 @@ export function Game(props: GameProps) {
     const [selectedButton, setSelectedButton] = useState<HTMLButtonElement | null>(null)
     const [answer, setAnswer] = useState("")
     const [score, setScore] = useState("")
+    const [scoreForLastRound, setScoreForLastRound] = useState<number | null>(null)
     const [numberOfPlayersAnswered, setNumberOfPlayersAnswered] = useState(0)
     const [numberOfPlayers, setNumberOfPlayers] = useState(0)
     const [disabled, setDisabled] = useState(false)
@@ -28,8 +29,12 @@ export function Game(props: GameProps) {
 
     useEffect(() => {
         socket.on('error', (message: string) => {
-            alert(message); // Handle error message (e.g., display to user)
+            alert(message); 
         });
+
+        socket.on("playlist data", (somePlaylistData) => {
+            setPlaylistData(somePlaylistData)
+        })
 
         //next Question
         socket.on("next question", (answers: string[], newPreviewUrl: string) => {
@@ -47,11 +52,6 @@ export function Game(props: GameProps) {
             }
             setDisabled(false)
         })
-
-        //receive new player
-        socket.on('player added', (users: string[], updatedPlaylistData: {playlistName: string, playlistImg: string}) => {
-            setPlaylistData(updatedPlaylistData)
-        });
 
         socket.on("players answered", (newNumberOfPlayersAnswered: number, newNumberOfPlayers: number) => {
             setNumberOfPlayersAnswered(newNumberOfPlayersAnswered)
@@ -77,15 +77,18 @@ export function Game(props: GameProps) {
             const index: string = socket.id as string
             //set user score
             setScore(users[index].score)
+            setScoreForLastRound(users[index].scoreLastRound)
             //set round over
             setRoundOver(true)
 
         });
 
         socket.on("game over", (users: any) => {
-            console.log(users)
             setGameOver(true)
         })
+
+        //get playlist data
+        socket.emit("get playlist data", roomCode)
 
         return () => {
             socket.off('error');
@@ -129,7 +132,7 @@ export function Game(props: GameProps) {
 
             {/* waiting room */}
             {!gameIsStarted &&
-                <section className="game-waitingroom">
+                <section className="game__waiting-room">
                     <h1>Welcome to the game</h1>
                     <p>Waiting for Admin to start the game...</p>
                 </section>
@@ -138,7 +141,7 @@ export function Game(props: GameProps) {
             {/* end of game */}
 
             {gameOver &&
-                <h2>Game Over</h2>
+                <h2 className="game__game-over">Game Over</h2>
             }
 
             {/* current round - active game */}
@@ -147,8 +150,11 @@ export function Game(props: GameProps) {
 
                 <section className="game__details">
 
-                    <h4>Score: {score}</h4>
-                    <h4>Players answered: {numberOfPlayersAnswered}/{numberOfPlayers}</h4>
+                    <h4>Score: {score.toLocaleString()}</h4>
+
+                    {roundOver && !gameOver &&<h4 className="game__point-this-round">+ {scoreForLastRound} points this round</h4>}
+
+                    {!roundOver && <h4>Players answered: {numberOfPlayersAnswered}/{numberOfPlayers}</h4>}
 
                     {answers.length > 0 &&
                         <ul className="game__answers">

@@ -6,8 +6,8 @@ export const Home: React.FC = () => {
 
     return (
         <main className="home">
-            <h1>Melody Mastermind</h1>
-            <p>The #1 Music party game</p>
+            <h1>Melody Party</h1>
+            <p>Guess your favorite songs with friends!</p>
 
             <Link to={"/create"} className="home__link">
                 <button className="home__button">Create a room</button>

@@ -3,6 +3,11 @@
 .game {
 
     color: white;
+    margin-bottom: 2rem;
+
+    &__waiting-room {
+        text-align: center;
+    }
 
     &__information {
         display: flex;
@@ -53,5 +58,10 @@
     &__skip-button {
         @include button;
         @include button--primary
+    }
+
+    &__game-over {
+        text-align: center;
+        font-size: 2.3rem;
     }
 }

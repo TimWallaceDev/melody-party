@@ -12,7 +12,7 @@ export function GameOverAdmin({ scores }: any) {
             scoresArr.push(scores[key])
         }
         //sort scores
-        scoresArr.sort((a, b) => a.score - b.score)
+        scoresArr.sort((a, b) => b.score - a.score)
         setFinalScores(scoresArr)
         //display the scores
     }, [])
@@ -26,7 +26,7 @@ export function GameOverAdmin({ scores }: any) {
 
             <h2>Rankings</h2>
             <ol>
-                {finalScores.map((score: any) => <li>{score.name}</li>)}
+                {finalScores.map((score: any) => <li key={score.name}>{score.name}</li>)}
             </ol>
         </section>
     )

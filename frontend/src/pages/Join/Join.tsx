@@ -3,45 +3,39 @@ import { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 
-interface JoinProps  {
+interface JoinProps {
     socket: Socket;
 }
 
-export function Join({socket}: JoinProps) {
+export function Join({ socket }: JoinProps) {
     const [roomCode, setRoomCode] = useState<string | null>(null)
     const [username, setUsername] = useState<string | null>(null)
+    const [errorMessage, setErrorMessage] = useState<string>("")
 
-    
+
     const navigate = useNavigate()
 
     useEffect(() => {
         socket.on('error', (message: string) => {
-            alert(message); // Handle error message (e.g., display to user)
+            setErrorMessage(message);
         });
+
+        socket.on("confirm join", (roomCode) => {
+            navigate(`/game/${roomCode}`)
+        })
 
         return () => {
             socket.off('error')
+            socket.off("confirm join")
         };
     }, []);
 
 
     function handleJoin(e: FormEvent) {
         e.preventDefault()
-        console.log("joining?")
-        //create socket connection
-        try {
-            //check if room exists
-            //check if username available TODO
-            //if so save it to session storage
-            //redirect to game / roomCode
-            socket.emit('join room', roomCode, username);
 
-        } catch (error) {
-            console.log(error)
-        }
-
-        //redirect to game
-        navigate("/game/" + roomCode)
+        //request to join room
+        socket.emit('join room', roomCode, username);
     }
 
 
@@ -55,10 +49,10 @@ export function Join({socket}: JoinProps) {
 
     return (
         <main className="join">
-            <p>{roomCode}</p>
             <h1>Join A Room</h1>
 
             <form className="join__form" onSubmit={(e) => handleJoin(e)}>
+                <h4 className="join__error-message">{errorMessage}</h4>
                 <input className="join__form-input" type="text" placeholder="create a username" onChange={(e) => handleUsernameChange(e)}></input>
 
                 <input className="join__form-input" type="number" placeholder="Room Number" onChange={(e) => handleRoomChange(e)}></input>

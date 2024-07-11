@@ -28,7 +28,7 @@ export function WaitingRoomAdmin({ socket, userList, roomCode, setGameIsStarted,
             <div className="room-information">
                 <h1 className="room-information__playlist-name">{playlistData.playlistName}</h1>
                 <img className="room-information__playlist-image" src={playlistData.playlistImg} />
-                <h2 className="room-information__room-code">Room Code: {roomCode}</h2>
+                <h2 className="room-information__room-code">Room Code: {roomCode.substring(0, 3)} {roomCode.substring(3, 6)}</h2>
             </div>
             <div className="players">
                 <h3>Users in room</h3>
