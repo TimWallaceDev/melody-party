@@ -11,6 +11,7 @@ import { JoinRoom } from './socket-functions/joinRoom';
 import { checkAnswer } from './socket-functions/answer';
 import { skipRound } from './socket-functions/skipRound';
 import 'dotenv/config'
+import { getPlaylistData } from './socket-functions/getPlaylistData';
 
 const app = express()
 app.use(cors())
@@ -50,6 +51,8 @@ io.on('connection', (socket: Socket) => {
     socket.on('answer', (roomCode: string, answer: string, timestamp: number) => checkAnswer(io, socket, roomCode, answer, timestamp))
 
     socket.on('skip', (roomCode: string) => skipRound(io, roomCode))
+
+    socket.on('get playlist data', (roomCode: string) => getPlaylistData(socket, roomCode))
 
 });
 

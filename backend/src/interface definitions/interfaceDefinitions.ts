@@ -27,6 +27,7 @@ export interface Room {
 export interface User {
     name: string;
     score: number;
+    scoreLastRound: number;
 }
 
 export interface Users {

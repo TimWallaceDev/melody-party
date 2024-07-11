@@ -19,7 +19,7 @@ if (rooms[roomCode].users[username]) {
 
 else {
     //add user to room
-    rooms[roomCode].users[socket.id] = { name: username, score: 0 }
+    rooms[roomCode].users[socket.id] = { name: username, score: 0, scoreLastRound: 0 }
     rooms[roomCode].numberOfPlayers += 1
 }
 
@@ -36,4 +36,5 @@ const names: string[] = Object.keys(rooms[roomCode].users).map(key => rooms[room
 
 //send players and playlist information
 io.to(roomCode).emit("player added", names, playlistData)
+io.to(roomCode).emit("confirm join", roomCode)
 }

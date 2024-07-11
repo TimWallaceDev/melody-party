@@ -6,13 +6,14 @@ import { PlaylistData } from "../interface definitions/interfaceDefinitions";
 
 
 export async function createRoom(socket: Socket, playlistUrl: string, rounds: number) {
+    console.log("creating room")
     const rooms: Rooms = getRooms()
     const split: string[] = playlistUrl.split("/")
     const playlistId: string = split[split.length - 1]
     const playlistData: PlaylistData | "playlist error" = await getPlaylistTracks(playlistId)
 
     if (playlistData === "playlist error") {
-        socket.emit("error", "Error getting playlist data. Are you sure that link is correct?")
+        socket.emit("create room error", "Error getting playlist data. Are you sure that link is correct?")
         console.log("playlist error")
         return
     }
@@ -20,8 +21,8 @@ export async function createRoom(socket: Socket, playlistUrl: string, rounds: nu
     //generate a roomcode
     let newRoomCode: string = Math.floor(Math.random() * 999_999).toString()
 
-    //if roomcode is taken, re-generate another one
-    while (rooms[newRoomCode]) {
+    //if roomcode is taken, re-generate another one. Regenerate if roomcode is less than 6 digits
+    while (rooms[newRoomCode] || parseInt(newRoomCode) <= 99_999) {
         newRoomCode = Math.floor(Math.random() * 999_999).toString()
     }
 
@@ -40,15 +41,8 @@ export async function createRoom(socket: Socket, playlistUrl: string, rounds: nu
         skips: 0
     }
 
-
-    //create playlistData obj
-    const playlistName: string = rooms[newRoomCode].playlistName
-    const playlistImg: string = rooms[newRoomCode].playlistImg
-    const somePlaylistData = { playlistImg, playlistName }
-
     //add socket to new room
     socket.join(newRoomCode);
 
-    //send back the room code and data for waiting room
-    socket.emit("playlist data", newRoomCode, somePlaylistData)
+    socket.emit("confirm room", newRoomCode)
 }

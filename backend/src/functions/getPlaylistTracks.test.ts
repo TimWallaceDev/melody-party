@@ -1,17 +1,37 @@
 import { getPlaylistTracks } from './getPlaylistTracks';
+import { PlaylistData } from '../interface definitions/interfaceDefinitions';
 
 describe('getPlaylistTracks', () => {
-    //gets a list of tracks from spotify
-    it('returns an array with track objects', async () => {
-
+    let result: PlaylistData
+    beforeAll(async () => {
+        //gets a list of tracks from spotify
         const testPlaylistId: string = "2zMYFKx7jL6T2Jk0gpHkt5"
-        
-        const result = await getPlaylistTracks(testPlaylistId);
-        expect(Array.isArray(result)).toBe(true);
-        expect(Object.keys(result).length > 0).toBe(true); // Includes correctIndex
+        result = await getPlaylistTracks(testPlaylistId) as PlaylistData;
+    })
+
+    it('returns an array with track objects', () => {
+        expect(Array.isArray(result.playlistTracks)).toBe(true);
+        expect(typeof result.playlistImg === "string").toBe(true)
+        expect(typeof result.playlistName === "string").toBe(true)
     });
 
-    // Add more tests for randomness, performance, and other edge cases
+    it("Returns an array with Tracks with values", () => {
+
+        expect(result.playlistTracks.length > 0).toBe(true); // Includes correctIndex
+    })
+
+    it("Check each value of playlistTracks is type track", () => {
+        for (let i = 0; i < result.playlistTracks.length; i++) {
+
+            const shifted = result.playlistTracks[i]
+            expect(typeof shifted.track === "object").toBe(true)
+            expect(typeof shifted.track.preview_url === "string").toBe(true)
+            expect(typeof shifted.track.name === "string").toBe(true)
+
+        }
+    })
+
+
 });
 
 //thanks chat GPT
