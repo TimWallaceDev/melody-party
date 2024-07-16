@@ -8,8 +8,6 @@ export function checkAnswer(io: Server, socket: Socket, roomCode: string, answer
     const correctAnswer: string = rooms[roomCode].correctAnswer
 
     //if it is, add points to the score for that user
-
-
     if (answer === correctAnswer) {
         //calculate the time (ms)
         const startTime: number = rooms[roomCode].questionTimestamp
@@ -31,7 +29,6 @@ export function checkAnswer(io: Server, socket: Socket, roomCode: string, answer
     if (rooms[roomCode].playersAnswered === rooms[roomCode].numberOfPlayers) {
         //send the results of the round to the room
         io.to(roomCode).emit("results", correctAnswer, rooms[roomCode].users)
-        console.log(rooms[roomCode].users)
     }
 
     //send the number of players answered back to all players

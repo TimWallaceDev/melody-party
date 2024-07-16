@@ -9,7 +9,7 @@ export function nextQuestion(roomCode: string) {
     const rooms: Rooms = getRooms()
     const currentIndex: number = rooms[roomCode].currentQuestion
     const rounds: number = rooms[roomCode].rounds
-    if (currentIndex === rounds) {
+    if (currentIndex === rounds - 1) {
         io.to(roomCode).emit("game over", rooms[roomCode].users)
         //TODO delete room obj
         return
@@ -19,6 +19,12 @@ export function nextQuestion(roomCode: string) {
     const nextIndex: number = rooms[roomCode].currentQuestion + 1
     rooms[roomCode].currentQuestion = nextIndex
 
+    //check that another track exists
+    if (!rooms[roomCode].tracks[nextIndex]) {
+        io.to(roomCode).emit("game over", rooms[roomCode].users)
+        //TODO delete room obj
+        return
+    }
     //get the next correct answer (with audio preview)
     const nextTrack: Track = rooms[roomCode].tracks[nextIndex]
     const previewUrl: string = nextTrack.track.preview_url
@@ -27,7 +33,7 @@ export function nextQuestion(roomCode: string) {
     const tracks: Track[] = rooms[roomCode].tracks
     const random: number[] | "not enough tracks" = getRandomTracks(tracks.length, nextIndex)
 
-    if (random === "not enough tracks"){
+    if (random === "not enough tracks") {
         io.to(roomCode).emit("error", "Not enough tracks in the playlist")
         return
     }
@@ -44,5 +50,8 @@ export function nextQuestion(roomCode: string) {
 
     //send next question to room
     //send the answers and previewURL
-    io.to(roomCode).emit("next question", [tracks[random[0]].track.name, tracks[random[1]].track.name, tracks[random[2]].track.name, tracks[random[3]].track.name], previewUrl)
+    const updatedNumberOfPlayers = Object.keys(rooms[roomCode].users).length
+    const currentQuestionIndex = currentIndex + 2
+    const totalQuestions = rounds 
+    io.to(roomCode).emit("next question", [tracks[random[0]].track.name, tracks[random[1]].track.name, tracks[random[2]].track.name, tracks[random[3]].track.name], previewUrl, updatedNumberOfPlayers, currentQuestionIndex, totalQuestions)
 }

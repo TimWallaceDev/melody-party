@@ -36,8 +36,6 @@ export function getRooms(): { [key: string]: Room } {
 
 io.on('connection', (socket: Socket) => {
     
-    console.log('a user connected');
-
     socket.on('disconnect', () => handleDisconnect());
 
     socket.on("next question", (roomCode: string) => nextQuestion(roomCode))

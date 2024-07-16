@@ -1,5 +1,5 @@
-import { getPlaylistTracks } from './getPlaylistTracks';
-import { PlaylistData } from '../interface definitions/interfaceDefinitions';
+import { getPlaylistTracks } from '../src/functions/getPlaylistTracks';
+import { PlaylistData } from '../src/interface definitions/interfaceDefinitions';
 
 describe('getPlaylistTracks', () => {
     let result: PlaylistData
@@ -33,5 +33,3 @@ describe('getPlaylistTracks', () => {
 
 
 });
-
-//thanks chat GPT

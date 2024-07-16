@@ -14,7 +14,6 @@ export async function createRoom(socket: Socket, playlistUrl: string, rounds: nu
 
     if (playlistData === "playlist error") {
         socket.emit("create room error", "Error getting playlist data. Are you sure that link is correct?")
-        console.log("playlist error")
         return
     }
 

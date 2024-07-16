@@ -13,6 +13,6 @@
     "strictPropertyInitialization": true,
     // "allowImportingTsExtensions": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "tests/getPlaylistTracks.test.ts", "tests/getRandomTracks.test.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,4 +1,4 @@
-import { getRandomTracks } from './getRandomTracks'; // Adjust import path
+import { getRandomTracks } from '../src/functions/getRandomTracks'; // Adjust import path
 
 describe('getRandomTracks', () => {
   it('returns an array with 4 index arrays. ', () => {
@@ -28,5 +28,3 @@ it('handles edge case with empty tracks', () => {
 
   // Add more tests for randomness, performance, and other edge cases
 });
-
-//thanks chat GPT
