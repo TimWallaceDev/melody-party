@@ -1,4 +1,4 @@
-import "./RoundOverAdmin.scss"
+// import "./RoundOverAdmin.scss"
 import { useEffect, useState } from "react"
 import { Socket } from "socket.io-client"
 
@@ -38,13 +38,14 @@ export function RoundOverAdmin({ socket, roomCode, scores }: RoundOverAdminProps
     }
 
     return (
-        <section className="round-over">
-            <button className="round-over__button" onClick={handleNextQuestion}>Next Question!</button>
+        <section className="round-over flex flex-col items-center">
 
-            <h2>Leading after this round</h2>
+            <h2>Leading after this round: </h2>
             <ol className="round-over__leaders">
                 {winners.map(winner => <li>{winner}</li>)}
             </ol>
+            
+            <button className="round-over__button bg-blue-300 font-bold px-4 py-2 rounded-full mt-4 text-black w-80" onClick={handleNextQuestion}>Next Question!</button>
         </section>
     )
 }

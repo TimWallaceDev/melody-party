@@ -1,5 +1,5 @@
 import React from "react";
-import "./CreateAdmin.scss"
+// import "./CreateAdmin.scss"
 import { Socket } from "socket.io-client";
 import { useState } from "react";
 

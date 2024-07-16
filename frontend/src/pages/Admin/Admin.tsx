@@ -24,6 +24,8 @@ export function Admin({ socket }: AdminProps) {
     const [gameOver, setGameOver] = useState<boolean>(false)
     const [scores, setScores] = useState({})
     const [correctAnswer, setCorrectAnswer] = useState<string>("")
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+    const [totalNumberOfQuestions, setTotalNumberOfQuestions] = useState(0)
 
     const audioRef = useRef<HTMLAudioElement | null>(null)
     const { roomCode } = useParams()
@@ -33,25 +35,27 @@ export function Admin({ socket }: AdminProps) {
 
         socket.on("playlist data", (somePlaylistData) => {
             if (somePlaylistData === "room does not exist") {
-                console.log(somePlaylistData)
-                console.log("no room found")
                 navigate("/create")
             }
             setPlaylistData(somePlaylistData)
         })
 
         //next Question
-        socket.on("next question", (answers, previewUrl) => {
+        socket.on("next question", (answers: string[], newPreviewUrl: string, updatedNumberOfPlayers: number, updatedQuestionIndex, updatedNumberOfQuestions) => {
             setAnswers(answers)
-            setPreviewUrl(previewUrl)
+            setPreviewUrl(newPreviewUrl)
             setRoundOver(false)
             setNumberOfPlayersAnswered(0)
             setRoundOver(false)
+            setNumberOfPlayers(updatedNumberOfPlayers)
+            setCurrentQuestionIndex(updatedQuestionIndex)
+            setTotalNumberOfQuestions(updatedNumberOfQuestions)
         })
 
         //receive new player
         socket.on('player added', (users, updatedPlaylistData) => {
             setUserList(users);
+            setNumberOfPlayers(Object.keys(users).length)
             setPlaylistData(updatedPlaylistData)
         });
 
@@ -76,6 +80,7 @@ export function Admin({ socket }: AdminProps) {
         socket.emit("get playlist data", roomCode)
 
         return () => {
+            socket.off('playlist data')
             socket.off('player answered');
             socket.off('player added');
             socket.off('next question');
@@ -98,7 +103,6 @@ export function Admin({ socket }: AdminProps) {
 
 
     if (!gameIsStarted && roomCode) {
-        console.log("waiting room")
         return (
             <WaitingRoomAdmin
                 socket={socket}
@@ -132,6 +136,8 @@ export function Admin({ socket }: AdminProps) {
                     roundOver={roundOver}
                     setRoundOver={setRoundOver}
                     correctAnswer={correctAnswer}
+                    currentIndex={currentQuestionIndex}
+                    totalQuestions={totalNumberOfQuestions}
                 />
             }
 

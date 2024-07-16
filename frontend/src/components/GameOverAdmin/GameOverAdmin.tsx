@@ -1,4 +1,4 @@
-import "./GameOverAdmin.scss"
+// import "./GameOverAdmin.scss"
 import { useEffect, useState } from "react"
 
 export function GameOverAdmin({ scores }: any) {
@@ -21,12 +21,12 @@ export function GameOverAdmin({ scores }: any) {
 
 
     return (
-        <section className="game-over-admin">
-            <h1>Game Over</h1>
+        <section className="game-over-admin flex flex-col p-8 items-center">
+            <h1 className="text-3xl font-bold">Game Over</h1>
 
-            <h2>Rankings</h2>
+            <h2 className="text-lg mt-4">Rankings</h2>
             <ol>
-                {finalScores.map((score: any) => <li key={score.name}>{score.name}</li>)}
+                {finalScores.map((score: any) => <li key={score.name} className="">{score.name}</li>)}
             </ol>
         </section>
     )
